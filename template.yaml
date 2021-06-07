@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  upload-s3-mapbox
+
+Parameters:
+  AppBucketName:
+    Type: String
+    Description: "REQUIRED: Unique S3 bucket name to use for the app."
+
+Resources:
+  S3JsonLoggerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/s3-json-logger.s3JsonLoggerHandler
+      Runtime: nodejs14.x
+      MemorySize: 256
+      Timeout: 60
+      Environment:
+        Variables:
+          MAPBOX_SECRET_TOKEN: <YOUR_MAPBOX_SECRET_HERE>
+          MAPBOX_DATASET_ID: <YOUR_DATASET_SECRET_HERE>
+      Policies:
+        S3ReadPolicy:
+          BucketName: !Ref AppBucketName
+      Events:
+        S3NewObjectEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref AppBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: ".geojson"
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref AppBucketName

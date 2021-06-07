@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "mapbox-s3-upload"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1nsba4hn0quyk"
+s3_prefix = "mapbox-s3-upload"
+region = "eu-west-2"
+profile = "mapbox_poc"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "AppBucketName=\"mapbox-file-upload\""
+confirm_changeset = true
